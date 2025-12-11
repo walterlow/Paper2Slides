@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: paper2slides-backend
+    restart: unless-stopped
+    environment:
+      - RAG_LLM_API_KEY=${RAG_LLM_API_KEY}
+      - RAG_LLM_BASE_URL=${RAG_LLM_BASE_URL:-https://api.openai.com/v1}
+      - IMAGE_GEN_API_KEY=${IMAGE_GEN_API_KEY}
+      - IMAGE_GEN_BASE_URL=${IMAGE_GEN_BASE_URL}
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Persist uploaded files and generated outputs
+      - ./sources/uploads:/app/sources/uploads
+      - ./outputs:/app/outputs
+      # Optional: mount .env file for API keys
+      - ./paper2slides/.env:/app/paper2slides/.env:ro
+    ports:
+      - "8001:8001"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: paper2slides-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+networks:
+  default:
+    name: paper2slides-network
+
+volumes:
+  uploads:
+  outputs:

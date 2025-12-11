@@ -1,0 +1,77 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile*
+docker-compose*
+.docker
+.dockerignore
+
+# Documentation
+README.md
+COMMUNICATION.md
+LICENSE
+*.md
+
+# IDE and editors
+.idea
+.vscode
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv
+.venv
+env
+.env
+ENV
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.coverage
+htmlcov
+.tox
+*.egg-info
+dist
+build
+
+# Frontend (excluded from backend build)
+frontend/
+node_modules/
+
+# Outputs and uploads (mounted as volumes)
+outputs/
+sources/uploads/
+
+# Assets and examples
+assets/
+*.pdf
+*.png
+*.jpg
+*.jpeg
+
+# Scripts (not needed in container)
+scripts/
+
+# Tests
+tests/
+*_test.py
+test_*.py
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp

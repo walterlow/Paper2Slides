@@ -1,0 +1,35 @@
+version: '3.8'
+
+# Development override - use with: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      # Mount source code for hot reload
+      - ./paper2slides:/app/paper2slides:ro
+      - ./api:/app/api:ro
+      - ./sources/uploads:/app/sources/uploads
+      - ./outputs:/app/outputs
+      - ./paper2slides/.env:/app/paper2slides/.env:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DEBUG=true
+    command: ["uvicorn", "api.server:app", "--host", "0.0.0.0", "--port", "8001", "--reload"]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      # Mount source code for hot reload
+      - ./frontend/src:/app/src:ro
+      - ./frontend/public:/app/public:ro
+      - ./frontend/index.html:/app/index.html:ro
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8001
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
